@@ -21,6 +21,10 @@ These two macros have one objective :
 
 - This works both when your device is in pure roomOS mode or Microsoft Teams Rooms.
 
+## Demo 🎥
+You can watch the following vidcast for a live demo on how it works:
+
+
 ## Requirements
 As these macros rely on the Memory Functions, you need to install the macro Memory_Functions.js first. 
 You will find more details here : https://github.com/Bobby-McGonigle/Cisco-RoomDevice-Macro-Projects-Examples/tree/master/Macro%20Memory%20Storage
@@ -42,6 +46,13 @@ Once this button has been pushed, we will store the following elements in the me
 When all the parameters are saved, **the button disappears**, so a random user cannot alter the saved configuration.
 
 After that, every time a call is hung up, the macro will read through the saved settings and reapply them all.
+
+## Install 🖥️
+You will need to upload 3 macros to your device:
+- Memory_Functions.js -> This macro needs to be disabled
+- spawn_save_settings_button.js -> This macro needs to be enabled, as it will create the save_settings button. It will automatically disable itself after the button is created
+- reapply_settings_after_call.js -> This macro needs to be enabled
+
 
 ### I am an admin and I want to change some settings, how do I do ? 
 If an administrator wants to modify certain settings after the button has disappeared, let's say the meeting zone must change for instance. 
