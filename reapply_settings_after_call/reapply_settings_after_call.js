@@ -206,7 +206,6 @@ async function get_camera_settings(){
         cameraStatus.position = position
       }
     }
-    
   }  
   return cameraStatus
 }
@@ -245,11 +244,13 @@ async function get_audio_settings(){
   try{
     let volume = await xapi.Status.Audio.Volume.get()
     
-    let noiseRemovalMode = await xapi.Config.Audio.Microphones.NoiseRemoval.Mode.get()
+    //let noiseRemovalMode = await xapi.Config.Audio.Microphones.NoiseRemoval.Mode.get()
+
+    let noiseRemoval =  await xapi.Status.Audio.Microphones.NoiseRemoval.get()
 
     let audio_settings = {
         "default_volume":volume,
-        "noise_removal_mode":noiseRemovalMode
+        "noise_removal":noiseRemoval
       }
 
     return audio_settings
@@ -259,11 +260,25 @@ async function get_audio_settings(){
 }
 async function reapply_audio_settings(audio_settings){
     try{
-        await xapi.Command.Audio.Volume.Set({ Level: audio_settings.default_volume });
-        await xapi.Config.Audio.Microphones.NoiseRemoval.Mode.set(audio_settings.noiseRemovalMode);
+        await xapi.Command.Audio.Volume.Set({ Level: Number(audio_settings.default_volume) });
     }catch(error){
         console.error('command xapi.Command.Audio.Volume.Set failed')
         throw(error)
+    }
+    try{
+      let current_noise_removal_status = await xapi.Status.Audio.Microphones.NoiseRemoval.get()
+      if(audio_settings.noise_removal =="On"){
+        if(current_noise_removal_status == "Off"){
+          //await xapi.Config.Audio.Microphones.NoiseRemoval.Mode.set("Enabled");
+          await xapi.Command.Audio.Microphones.NoiseRemoval.Activate();
+        }
+      }else{ 
+          //await xapi.Config.Audio.Microphones.NoiseRemoval.Mode.set("Disabled");
+          await xapi.Command.Audio.Microphones.NoiseRemoval.Deactivate();
+      }
+    }catch(error){
+      console.error('command xapi.Config.Audio.Microphones.NoiseRemoval.Mode.set(audio_settings.noiseRemovalMode); failed')
+      throw (error)
     }
   
 }
@@ -383,3 +398,4 @@ xapi.Event.UserInterface.Extensions.Panel.Clicked.on(event => {
         break;
     }
 })
+
